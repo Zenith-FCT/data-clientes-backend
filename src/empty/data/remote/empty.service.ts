@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEmptyDto } from './dto/create-empty.dto';
-import { UpdateEmptyDto } from './dto/update-empty.dto';
+import { CreateEmptyDto } from '../../presentation/dto/create-empty.dto';
+import { UpdateEmptyDto } from '../../presentation/dto/update-empty.dto';
 
 @Injectable()
 export class EmptyService {

@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { EmptyService } from './empty.service';
+import { EmptyService } from '../data/remote/empty.service';
 import { CreateEmptyDto } from './dto/create-empty.dto';
 import { UpdateEmptyDto } from './dto/update-empty.dto';
 
