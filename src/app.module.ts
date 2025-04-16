@@ -2,19 +2,28 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmptyModule } from './empty/empty.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'PMYSQL132.dns-servicio.com',
-    port: 3306,
-    username: 'incidentally',
-    password: 'K|{4VzzCee7u76R[NF',
-    database: '7686546_bbdd_demoCxD',
-    entities: [],
-    synchronize: true,
-  }),EmptyModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get('DB_HOST'),
+        port: +configService.get('DB_PORT'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_DATABASE'),
+        entities: [],
+        synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
+      }),
+    }),EmptyModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
