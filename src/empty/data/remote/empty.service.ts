@@ -11,7 +11,8 @@ export class EmptyService {
 
   findAll() {
     return `This action returns all empty`;
-  }  findOne(id: number) {
+  }  
+  findOne(id: number) {
     return `This action returns a #${id} empty`;
   }  
   
