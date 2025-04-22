@@ -10,26 +10,18 @@ export class GetAllMonthlySalesUseCase {
     constructor(
         @InjectRepository(OrdersInvoicesEntity)
         private ordersRepository: Repository<OrdersInvoicesEntity>
-    ) {}
-
+    ) {}    
     async execute(): Promise<MonthlySalesModel[]> {
-       
-        const monthlySalesData = await this.ordersRepository.query(`
-            SELECT
-                DATE_FORMAT(Fecha_Pedido, '%Y-%m') as yearMonth,
-                COUNT(*) as totalOrders,
-                SUM(Total_Pedido) as totalAmount
-            FROM
-                Pedidos
-            GROUP BY
-                yearMonth
-            ORDER BY
-                yearMonth DESC
-        `);
+        const monthlySalesData = await this.ordersRepository
+            .createQueryBuilder('Pedidos')
+            .select("DATE_FORMAT(Pedidos.fechaPedido, '%Y-%m')", 'yearMonth')
+            .addSelect('COUNT(*)', 'totalOrders')
+            .addSelect('SUM(Pedidos.totalPedido)', 'totalAmount')
+            .groupBy('yearMonth')
+            .orderBy('yearMonth', 'DESC')
+            .getRawMany();
 
-       
         return monthlySalesData.map(item => {
-            
             const uniqueId = `sales-${item.yearMonth}`;
             
             return new MonthlySalesModel(
