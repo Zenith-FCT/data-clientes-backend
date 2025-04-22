@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmptyModule } from './empty/empty.module';
 import { OrdersInvoicesModule } from './orders-invoices/orders-invoices.module';
+import { OrdersInvoicesEntity } from './orders-invoices/data/entities/orders-invoices.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { OrdersInvoicesModule } from './orders-invoices/orders-invoices.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [],
+        entities: [OrdersInvoicesEntity],
         synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
       }),
     }),EmptyModule,OrdersInvoicesModule
