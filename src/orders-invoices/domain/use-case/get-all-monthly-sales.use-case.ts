@@ -11,8 +11,7 @@ export class GetAllMonthlySalesUseCase {
         @InjectRepository(OrdersInvoicesEntity)
         private ordersRepository: Repository<OrdersInvoicesEntity>
     ) {}    
-    async execute(): Promise<MonthlySalesModel[]> {
-        const monthlySalesData = await this.ordersRepository
+    async execute(): Promise<MonthlySalesModel[]> {        const monthlySalesData = await this.ordersRepository
             .createQueryBuilder('Pedidos')
             .select("DATE_FORMAT(Pedidos.fechaPedido, '%Y-%m')", 'yearMonth')
             .addSelect('COUNT(*)', 'totalOrders')
@@ -22,13 +21,13 @@ export class GetAllMonthlySalesUseCase {
             .getRawMany();
 
         return monthlySalesData.map(item => {
-            const uniqueId = `sales-${item.yearMonth}`;
+            const uniqueId = `sales-${item.yearMonth as string}`;
             
             return new MonthlySalesModel(
                 uniqueId,
-                item.yearMonth,
-                item.totalAmount.toString(),
-                item.totalOrders.toString() 
+                item.yearMonth as string,
+                (item.totalAmount as number).toString(),
+                (item.totalOrders as number).toString() 
             );
         });
     }
