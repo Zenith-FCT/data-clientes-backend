@@ -9,5 +9,6 @@ export class OrdersInvoicesController {
   @Get('monthly-sales')
   findAll() {
     return this.service.getAllMonthlySales();
+    
   }
 }
