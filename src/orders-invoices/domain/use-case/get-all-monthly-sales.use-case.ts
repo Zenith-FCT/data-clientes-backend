@@ -18,10 +18,10 @@ export class GetAllMonthlySalesUseCase {
         private ordersRepository: Repository<OrdersInvoicesEntity>
     ) {}      async execute(): Promise<MonthlySalesModel[]> {
         const monthlySalesData = await this.ordersRepository
-            .createQueryBuilder('Pedidos')
-            .select("DATE_FORMAT(Pedidos.fechaPedido, '%Y-%m')", 'yearMonth')
+            .createQueryBuilder('pedidos')
+            .select("DATE_FORMAT(pedidos.fecha_pedido, '%Y-%m')", 'yearMonth')
             .addSelect('COUNT(*)', 'totalOrders')
-            .addSelect('SUM(Pedidos.totalPedido)', 'totalAmount')
+            .addSelect('SUM(pedidos.total_pedido)', 'totalAmount')
             .groupBy('yearMonth')
             .orderBy('yearMonth', 'DESC')
             .getRawMany() as MonthlySalesRawData[];
