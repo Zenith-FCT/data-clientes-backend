@@ -2,13 +2,15 @@ import { Controller, Get } from '@nestjs/common';
 import { OrdersInvoicesService } from '../data/orders-invoices.service';
 import { GetAllOrdersInvoiceForProductUseCase } from '../domain/use-case/get-all-orders-invoice-for-product.use-case';
 import { Order, Product } from '../data/entities/orders-invoices.entity';
+import { GetLtvMonthlyUseCase } from '../domain/use-case/get-ltv-monthly.use-case';
 
 @Controller()
 export class OrdersInvoicesController {
 
   constructor(
     private service: OrdersInvoicesService,
-    private ordersProductsUseCase: GetAllOrdersInvoiceForProductUseCase
+    private ordersProductsUseCase: GetAllOrdersInvoiceForProductUseCase,
+    private getLtvMonthlyUseCase: GetLtvMonthlyUseCase
   ) { }
 
   @Get('monthly_totals')
@@ -20,6 +22,10 @@ export class OrdersInvoicesController {
   async getAllOrdersInvoiceForProduct(): Promise<any[]> {
    
     return this.ordersProductsUseCase.execute();
+  }
+  @Get('ltv')
+  async getLtvMonthly(): Promise<any[]> {
+    return this.getLtvMonthlyUseCase.execute();
   }
 
   

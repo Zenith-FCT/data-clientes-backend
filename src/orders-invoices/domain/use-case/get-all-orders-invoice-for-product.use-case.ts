@@ -80,7 +80,7 @@ export class GetAllOrdersInvoiceForProductUseCase {
       }
       
       result.push(new OrderInvoiceProductTypeModel(
-        category,
+        category + categoryDate,
         categoryDate,
         category,
         totalInvoice.toFixed(2),
