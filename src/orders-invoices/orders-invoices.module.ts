@@ -6,6 +6,7 @@ import { OrdersInvoicesService } from './data/orders-invoices.service';
 import { GetAllMonthlySalesUseCase } from './domain/use-case/get-all-monthly-sales.use-case';
 import { GetAllOrdersInvoiceForProductUseCase } from './domain/use-case/get-all-orders-invoice-for-product.use-case';
 import { GetLtvMonthlyUseCase } from './domain/use-case/get-ltv-monthly.use-case';
+import { GetOrdersInvoiceClientTypeUseCase } from './domain/use-case/get-orders-invoice-client-type.use-case';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OrdersInvoicesEntity, Order, Product, Client])],
@@ -13,7 +14,8 @@ import { GetLtvMonthlyUseCase } from './domain/use-case/get-ltv-monthly.use-case
     OrdersInvoicesService, 
     GetAllMonthlySalesUseCase,
     GetAllOrdersInvoiceForProductUseCase,
-    GetLtvMonthlyUseCase
+    GetLtvMonthlyUseCase,
+    GetOrdersInvoiceClientTypeUseCase
   ],
   controllers: [OrdersInvoicesController]
 })
