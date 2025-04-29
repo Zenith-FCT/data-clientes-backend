@@ -1,17 +1,12 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 // Make sure the file exists at the specified path, or update the path if necessary
-import { ClientsService } from '../data/clients.service';
+import { ClientsService } from '../data/database/clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
-
-  @Post()
-  create(@Body() createClientDto: CreateClientDto) {
-    return this.clientsService.create(createClientDto);
-  }
 
   @Get()
   findAll() {
@@ -21,11 +16,6 @@ export class ClientsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.clientsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
-    return this.clientsService.update(+id, updateClientDto);
   }
 
   @Delete(':id')
