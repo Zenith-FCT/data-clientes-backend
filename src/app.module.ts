@@ -5,8 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmptyModule } from './features/empty/empty.module';
 import { OrdersInvoicesModule } from './features/orders-invoices/orders-invoices.module';
-import { OrdersInvoicesEntity, Order, Product, Client } from './features/orders-invoices/data/entities/orders-invoices.entity';
+import { OrdersInvoicesEntity, Order, Product } from './features/orders-invoices/data/entities/orders-invoices.entity';
 import { ClientsModule } from './features/clients/clients.module';
+import { Client } from './features/clients/data/entities/client.entity';
 
 @Module({
   imports: [
