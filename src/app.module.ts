@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmptyModule } from './features/empty/empty.module';
 import { OrdersInvoicesModule } from './features/orders-invoices/orders-invoices.module';
 import { OrdersInvoicesEntity, Order, Product, Client } from './features/orders-invoices/data/entities/orders-invoices.entity';
+import { CartsModule } from './features/carts/carts.module';
+import { CartsEntity } from './features/carts/data/entities/carts.entity';
 
 @Module({
   imports: [
@@ -22,12 +24,13 @@ import { OrdersInvoicesEntity, Order, Product, Client } from './features/orders-
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [OrdersInvoicesEntity, Order, Product, Client],
+        entities: [OrdersInvoicesEntity, Order, Product, Client, CartsEntity],
         synchronize: false,
       }),
     }),
     EmptyModule,
-    OrdersInvoicesModule
+    OrdersInvoicesModule,
+    CartsModule
   ],
   controllers: [AppController],
   providers: [AppService],
