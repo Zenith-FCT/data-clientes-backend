@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { GetAllMonthlySalesUseCase } from '../domain/use-case/get-all-monthly-sales.use-case';
 import { MonthlySalesModel } from '../domain/models/monthly-sales-model';
+import { GetAllMonthlySalesUseCase } from '../domain/use-case/get-all-monthly-sales.use-case';
 
 @Injectable()
 export class OrdersInvoicesService{
@@ -12,4 +12,4 @@ export class OrdersInvoicesService{
     async getAllMonthlySales(): Promise<MonthlySalesModel[]> {
         return this.getAllMonthlySalesUseCase.execute();
     }
-}
+} 

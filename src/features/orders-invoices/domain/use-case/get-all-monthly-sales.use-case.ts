@@ -10,30 +10,31 @@ interface MonthlySalesRawData {
     totalAmount: number;
 }
 
-
 @Injectable()
 export class GetAllMonthlySalesUseCase {
     constructor(
         @InjectRepository(OrdersInvoicesEntity)
         private ordersRepository: Repository<OrdersInvoicesEntity>
-    ) {}      async execute(): Promise<MonthlySalesModel[]> {
+    ) {}      
+    
+    async execute(): Promise<MonthlySalesModel[]> {
         const monthlySalesData = await this.ordersRepository
-            .createQueryBuilder('Pedidos')
-            .select("DATE_FORMAT(Pedidos.fechaPedido, '%Y-%m')", 'yearMonth')
+            .createQueryBuilder('pedidos')
+            .select("DATE_FORMAT(pedidos.fecha_pedido, '%Y-%m')", 'yearMonth')
             .addSelect('COUNT(*)', 'totalOrders')
-            .addSelect('SUM(Pedidos.totalPedido)', 'totalAmount')
+            .addSelect('SUM(pedidos.total_pedido)', 'totalAmount')
             .groupBy('yearMonth')
             .orderBy('yearMonth', 'DESC')
             .getRawMany() as MonthlySalesRawData[];
 
         return monthlySalesData.map((item: MonthlySalesRawData) => {
-            const uniqueId = `sales-${item.yearMonth}`;
+            const [year, month] = item.yearMonth.split('-');
             
             return new MonthlySalesModel(
-                uniqueId,
-                item.yearMonth,
-                item.totalAmount.toString(),
-                item.totalOrders.toString()
+                month,
+                parseInt(year),
+                item.totalAmount,
+                item.totalOrders
             );
         });
     }

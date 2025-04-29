@@ -1,8 +1,13 @@
 export class MonthlySalesModel {
-    constructor(
-        public id: string,
-        public date: string,
-        public totalSales: string,
-        public totalSalesNumber: string
-    ) {}
+  month: string;
+  year: number;
+  totalSales: number;
+  count: number;
+  
+  constructor(month: string, year: number, totalSales: number, count: number) {
+    this.month = month;
+    this.year = year;
+    this.totalSales = totalSales;
+    this.count = count;
+  }
 }
