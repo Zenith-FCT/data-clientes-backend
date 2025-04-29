@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmptyModule } from './empty/empty.module';
 import { OrdersInvoicesModule } from './orders-invoices/orders-invoices.module';
 import { OrdersInvoicesEntity, Order, Product, Client } from './orders-invoices/data/entities/orders-invoices.entity';
+import { ClientsModule } from './clients/clients.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { OrdersInvoicesEntity, Order, Product, Client } from './orders-invoices/
       }),
     }),
     EmptyModule,
-    OrdersInvoicesModule
+    OrdersInvoicesModule,
+    ClientsModule
   ],
   controllers: [AppController],
   providers: [AppService],
