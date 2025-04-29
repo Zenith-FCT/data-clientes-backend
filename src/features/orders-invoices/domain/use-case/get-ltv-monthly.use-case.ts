@@ -46,8 +46,9 @@ export class GetLtvMonthlyUseCase {
             ltvModels.push(
                 new LtvModel(
                     uniqueId,
-                    year,
-                    cumulativeLtv.toFixed(2)
+                    parseInt(year),
+                    parseFloat(cumulativeLtv.toFixed(2)),
+                    clientCount
                 )
             );
         });
