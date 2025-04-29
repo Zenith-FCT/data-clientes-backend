@@ -12,4 +12,4 @@ export class OrdersInvoicesService{
     async getAllMonthlySales(): Promise<MonthlySalesModel[]> {
         return this.getAllMonthlySalesUseCase.execute();
     }
-}
+} 
