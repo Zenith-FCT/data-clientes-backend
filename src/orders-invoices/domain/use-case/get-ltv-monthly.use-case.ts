@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Client, Order } from '../../data/entities/orders-invoices.entity';
+import { Client } from '../../data/entities/orders-invoices.entity';
 import { LtvModel } from '../models/ltv-model';
 
-interface YearlyData {
+interface YearlyLtvData {
     year: string;
-    totalInvoice: number;
-    clientCount: number;
+    totalLtv: string;
+    clientCount: string;
 }
 
 @Injectable()
@@ -24,14 +24,15 @@ export class GetLtvMonthlyUseCase {    constructor(
             .where('clientes.Fecha_1er_Pedido IS NOT NULL')
             .groupBy('year')
             .orderBy('year', 'ASC')
-            .getRawMany();
+            .getRawMany() as YearlyLtvData[];
         
         let cumulativeLtv = 0;
         const ltvModels: LtvModel[] = [];
         
-        yearlyLtvData.forEach((item: any) => {
-            const yearLtvAverage = item.clientCount > 0 
-                ? parseFloat(item.totalLtv) / parseInt(item.clientCount) 
+        yearlyLtvData.forEach((item) => {
+            const clientCount = parseInt(item.clientCount);
+            const yearLtvAverage = clientCount > 0 
+                ? parseFloat(item.totalLtv) / clientCount 
                 : 0;
             
             cumulativeLtv += yearLtvAverage;

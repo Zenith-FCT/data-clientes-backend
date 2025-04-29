@@ -1,7 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { OrdersInvoicesService } from '../data/orders-invoices.service';
 import { GetAllOrdersInvoiceForProductUseCase } from '../domain/use-case/get-all-orders-invoice-for-product.use-case';
-import { Order, Product } from '../data/entities/orders-invoices.entity';
 import { GetLtvMonthlyUseCase } from '../domain/use-case/get-ltv-monthly.use-case';
 import { GetOrdersInvoiceClientTypeUseCase } from '../domain/use-case/get-orders-invoice-client-type.use-case';
 

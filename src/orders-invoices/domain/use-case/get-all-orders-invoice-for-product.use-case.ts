@@ -133,7 +133,7 @@ export class GetAllOrdersInvoiceForProductUseCase {
         if (isNaN(discountValue)) {
           discountValue = 0;
         }
-      } catch (error) {
+      } catch {
         discountValue = 0;
       }
     }

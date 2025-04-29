@@ -4,6 +4,19 @@ import { Repository } from 'typeorm';
 import { Order } from '../../data/entities/orders-invoices.entity';
 import { InvoiceClientsTypeModel } from '../models/order-invoice-client-type-mode';
 
+interface ClientCount {
+    email: string;
+    orderCount: string;
+}
+
+interface MonthlyOrderData {
+    yearMonth: string;
+    unique_orders_total: string;
+    unique_orders_count: string;
+    recurrent_orders_total: string;
+    recurrent_orders_count: string;
+}
+
 @Injectable()
 export class GetOrdersInvoiceClientTypeUseCase {
     constructor(
@@ -17,7 +30,7 @@ export class GetOrdersInvoiceClientTypeUseCase {
                 .addSelect('COUNT(pedidos.numero_pedido)', 'orderCount')
                 .where('pedidos.email IS NOT NULL')
                 .groupBy('pedidos.email')
-                .getRawMany();
+                .getRawMany() as ClientCount[];
 
             const uniqueClientEmails = new Set<string>();
             const recurrentClientEmails = new Set<string>();
@@ -44,22 +57,20 @@ export class GetOrdersInvoiceClientTypeUseCase {
                 .setParameter('recurrentEmails', Array.from(recurrentClientEmails))
                 .groupBy('yearMonth')
                 .orderBy('yearMonth', 'ASC')
-                .getRawMany();
+                .getRawMany() as MonthlyOrderData[];
                 
             if (!monthlyData || monthlyData.length === 0) {
                 return [];
             }
             
-            const result = monthlyData;
-            
-            return result.map(row => {
+            return monthlyData.map(row => {
                 return new InvoiceClientsTypeModel(
                     `client-type-${row.yearMonth}`,
                     row.yearMonth,
-                    row.recurrent_orders_total?.toString() || '0.00',
-                    row.unique_orders_total?.toString() || '0.00',
-                    row.recurrent_orders_count?.toString() || '0',
-                    row.unique_orders_count?.toString() || '0'
+                    row.recurrent_orders_total || '0.00',
+                    row.unique_orders_total || '0.00',
+                    row.recurrent_orders_count || '0',
+                    row.unique_orders_count || '0'
                 );
             });
         } catch (error) {
