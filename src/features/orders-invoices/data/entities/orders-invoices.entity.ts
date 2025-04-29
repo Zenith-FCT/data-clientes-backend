@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 
-@Entity('Pedidos')
+@Entity('pedidos')
 export class OrdersInvoicesEntity {
     @PrimaryGeneratedColumn()
     id: string;
@@ -12,7 +12,7 @@ export class OrdersInvoicesEntity {
     totalPedido: number;
 }
 
-@Entity('Pedidos')
+@Entity('pedidos')
 export class Order {
   @PrimaryColumn({ name: 'numero_pedido', type: 'varchar', length: 20 })
   numeroPedido: string;
