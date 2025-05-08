@@ -4,11 +4,6 @@ import { Repository } from 'typeorm';
 import { OrdersInvoicesEntity } from '../../../orders-invoices/data/entities/orders-invoices.entity';
 import { TotalOrders } from '../models/carts-models';
 
-interface RawQueryResult {
-  total: string;
-  date: string;
-}
-
 @Injectable()
 export class GetTotalOrdersByMonthUseCase {
   constructor(
@@ -26,15 +21,12 @@ export class GetTotalOrdersByMonthUseCase {
         .orderBy('date', 'DESC')
         .getRawMany();
       
-      return queryResult.map((row): TotalOrders => {
-       if (typeof row !== 'object' || row === null) {
-          throw new Error('Formato de resultado inválido');
-        }
+      return queryResult.map((row) => {
+        const rowObj = row as Record<string, unknown>;
+        const totalValue = rowObj.total ? String(rowObj.total) : '0';
+        const dateValue = rowObj.date ? String(rowObj.date) : '';
         
-        const total = 'total' in row ? String(row.total) : '0';
-        const date = 'date' in row ? String(row.date) : '';
-        
-        return new TotalOrders(total, date);
+        return new TotalOrders(totalValue, dateValue);
       });
     } catch (error) {
       console.error('Error en la consulta de pedidos por mes:', error);

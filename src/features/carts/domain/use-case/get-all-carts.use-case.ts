@@ -4,11 +4,6 @@ import { Repository } from "typeorm";
 import { CartsEntity } from "../../data/entities/carts.entity";
 import { CartModel } from "../models/carts-models";
 
-interface RawQueryResult {
-  total: string;
-  date: string;
-}
-
 @Injectable()
 export class GetAllCartsUseCase {
   constructor(
@@ -24,18 +19,15 @@ export class GetAllCartsUseCase {
       .orderBy("date", "ASC")
       .getRawMany();
     
-    return queryResult.map((row): CartModel => {
-      if (typeof row !== 'object' || row === null) {
-        throw new Error('Formato de resultado inválido');
-      }
-      
-      const total = 'total' in row ? String(row.total) : '0';
-      const date = 'date' in row ? String(row.date) : '';
+    return queryResult.map((row) => {
+      const rowObj = row as Record<string, unknown>;
+      const totalValue = rowObj.total ? String(rowObj.total) : '0';
+      const dateValue = rowObj.date ? String(rowObj.date) : '';
       
       return new CartModel(
-        `monthly-${date}`,
-        date,
-        total
+        `monthly-${dateValue}`,
+        dateValue,
+        totalValue
       );
     });
   }
