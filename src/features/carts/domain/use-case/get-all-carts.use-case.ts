@@ -20,14 +20,15 @@ export class GetAllCartsUseCase {
       .getRawMany();
     
     return queryResult.map((row) => {
-      const rowObj = row as Record<string, unknown>;
-      const totalValue = rowObj.total ? String(rowObj.total) : '0';
-      const dateValue = rowObj.date ? String(rowObj.date) : '';
+      const total = typeof row.total === 'string' ? row.total :
+                   typeof row.total === 'number' ? String(row.total) : '0';
+                   
+      const date = typeof row.date === 'string' ? row.date : '';
       
       return new CartModel(
-        `monthly-${dateValue}`,
-        dateValue,
-        totalValue
+        `monthly-${date}`,
+        date,
+        total
       );
     });
   }
