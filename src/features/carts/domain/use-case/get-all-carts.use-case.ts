@@ -4,6 +4,11 @@ import { Repository } from "typeorm";
 import { CartsEntity } from "../../data/entities/carts.entity";
 import { CartModel } from "../models/carts-models";
 
+interface QueryResult {
+  total: string;
+  date: string;
+}
+
 @Injectable()
 export class GetAllCartsUseCase {
   constructor(
@@ -12,24 +17,36 @@ export class GetAllCartsUseCase {
   ) {}
 
   async execute(): Promise<CartModel[]> {
-    const queryResult = await this.cartsRepository.createQueryBuilder("cart")
+    const rawResults = await this.cartsRepository.createQueryBuilder("cart")
       .select("CAST(COUNT(cart.id) AS CHAR)", "total")
       .addSelect("DATE_FORMAT(cart.fechaCarrito, '%Y-%m')", "date")
       .groupBy("DATE_FORMAT(cart.fechaCarrito, '%Y-%m')")
       .orderBy("date", "ASC")
       .getRawMany();
     
-    return queryResult.map((row) => {
-      const total = typeof row.total === 'string' ? row.total :
-                   typeof row.total === 'number' ? String(row.total) : '0';
-                   
-      const date = typeof row.date === 'string' ? row.date : '';
-      
-      return new CartModel(
-        `monthly-${date}`,
-        date,
-        total
-      );
-    });
+    return rawResults
+      .filter((row): row is Record<string, unknown> => 
+        row !== null && typeof row === 'object'
+      )
+      .map(row => {
+        const result: QueryResult = {
+          total: '',
+          date: ''
+        };
+        
+        if ('total' in row && (typeof row.total === 'string' || typeof row.total === 'number')) {
+          result.total = String(row.total);
+        }
+        
+        if ('date' in row && (typeof row.date === 'string')) {
+          result.date = row.date;
+        }
+        
+        return new CartModel(
+          `monthly-${result.date}`, 
+          result.date, 
+          result.total
+        );
+      });
   }
 }
