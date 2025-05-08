@@ -8,7 +8,7 @@ export class CartModel {
 
 export class TotalOrders {
     constructor(
-        public total: number,
+        public total: string,
         public date: string,
     ) {}
 }

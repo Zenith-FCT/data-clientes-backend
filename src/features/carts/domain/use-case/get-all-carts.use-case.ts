@@ -4,6 +4,12 @@ import { Repository } from "typeorm";
 import { CartsEntity } from "../../data/entities/carts.entity";
 import { CartModel } from "../models/carts-models";
 
+// Definir un tipo seguro para los resultados
+type CartCountResult = {
+  total: string;
+  date: string;
+};
+
 @Injectable()
 export class GetAllCartsUseCase {
   constructor(
@@ -12,17 +18,24 @@ export class GetAllCartsUseCase {
   ) {}
 
   async execute(): Promise<CartModel[]> {
-     const result = await this.cartsRepository.createQueryBuilder("cart")
-      .select("COUNT(cart.id)", "total")
+    const queryResult = await this.cartsRepository.createQueryBuilder("cart")
+      .select("CAST(COUNT(cart.id) AS CHAR)", "total")
       .addSelect("DATE_FORMAT(cart.fechaCarrito, '%Y-%m')", "date")
       .groupBy("DATE_FORMAT(cart.fechaCarrito, '%Y-%m')")
       .orderBy("date", "ASC")
       .getRawMany();
     
-    return result.map(item => new CartModel(
-      `monthly-${item.date}`, 
-      item.date,              
-      item.total.toString()  
-    ));
+    const typedResults: CartCountResult[] = queryResult.map(row => ({
+      total: String(row.total),
+      date: String(row.date)
+    }));
+    
+    return typedResults.map(item => 
+      new CartModel(
+        `monthly-${item.date}`,
+        item.date,
+        item.total
+      )
+    );
   }
 }

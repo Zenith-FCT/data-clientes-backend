@@ -1,4 +1,4 @@
-import { Controller, Get, Injectable } from "@nestjs/common";
+import { Controller, Get } from "@nestjs/common";
 import { CartsService } from "../data/carts.service";
 import { GetAllCartsUseCase } from "../domain/use-case/get-all-carts.use-case";
 import { GetTotalOrdersByMonthUseCase } from "../domain/use-case/get-total-orders-by-month.use-case";
