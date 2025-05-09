@@ -20,7 +20,7 @@ export class CouponsService {
             .where('Nombre_cupon_descuento IS NOT NULL')
             .groupBy("Nombre_cupon_descuento")
             .orderBy("couponsCount", "DESC")
-            .getRawMany()
+            .getRawMany() as {couponName: string, couponsCount: number}[]
 
         return couponsData.map((data) => 
             new Coupon(data.couponName, data.couponsCount)
@@ -41,17 +41,15 @@ export class CouponsService {
             .createQueryBuilder('pedidos')
             .select('Nombre_cupon_descuento')
             .where('Nombre_cupon_descuento IS NOT NULL')
-            .getCount();
+            .getCount() as number;
     }
 
     async getTotalDiscount(): Promise<number> {
-        const result = await this.ordersRepository
+        return await this.ordersRepository
             .createQueryBuilder('pedidos')
             .select('SUM(Total_descuento)', 'discount')
             .where('Nombre_cupon_descuento IS NOT NULL')
-            .getRawOne();
-        
-        return Number(result.discount)
+            .getRawOne() as number;
     }
 
     async getCouponsByYear(year: string): Promise<CouponMonth[]> {
@@ -64,7 +62,7 @@ export class CouponsService {
             .andWhere('Nombre_cupon_descuento IS NOT NULL')
             .groupBy('month')
             .orderBy('month')
-            .getRawMany();
+            .getRawMany() as {count: string, dicount: string, month: number}[];
 
         return result.map((data) => 
             new CouponMonth(data.count, data.dicount, data.month)
@@ -80,9 +78,8 @@ export class CouponsService {
             .where('YEAR(Fecha_Pedido) = :year', { year })
             .andWhere('MONTH(Fecha_Pedido) = :month', { month })
             .andWhere('Nombre_cupon_descuento IS NOT NULL')
-            .getRawOne();
+            .getRawOne() as {count: string, dicount: string};
 
         return new CouponMonth(result.count, result.dicount, Number(month))
-
     }
 }
