@@ -4,6 +4,7 @@ import {Coupon} from 'src/features/coupons/domain/models/coupon';
 import {CouponMonth} from 'src/features/coupons/domain/models/coupons-month';
 import {YearDataCoupon} from 'src/features/coupons/domain/models/year-coupon';
 import {Repository} from 'typeorm';
+import {TotalCoupon} from '../../domain/models/total-coupon';
 import {OrdersCouponsEntity} from './entities/oders-coupons-invoices.entity';
 
 @Injectable()
@@ -22,7 +23,7 @@ export class CouponsService {
             .orderBy("couponsCount", "DESC")
             .getRawMany() as {couponName: string, couponsCount: number}[]
 
-        return couponsData.map((data) => 
+        return couponsData.map((data: {couponName: string, couponsCount: number}) => 
             new Coupon(data.couponName, data.couponsCount)
         )
     }
@@ -36,20 +37,24 @@ export class CouponsService {
             .getRawMany() as YearDataCoupon[]
     }
 
-    async getTotal(): Promise<number> {
-        return await this.ordersRepository
+    async getTotal(): Promise<TotalCoupon> {  
+        const data = await this.ordersRepository
             .createQueryBuilder('pedidos')
-            .select('Nombre_cupon_descuento')
+            .select('Count(Nombre_cupon_descuento)', 'count')
             .where('Nombre_cupon_descuento IS NOT NULL')
-            .getCount() as number;
+            .getRawOne() as {count: number};
+
+        return new TotalCoupon(data.count)
     }
 
-    async getTotalDiscount(): Promise<number> {
-        return await this.ordersRepository
+    async getTotalDiscount(): Promise<TotalCoupon> {
+        const data = await this.ordersRepository
             .createQueryBuilder('pedidos')
             .select('SUM(Total_descuento)', 'discount')
             .where('Nombre_cupon_descuento IS NOT NULL')
-            .getRawOne() as number;
+            .getRawOne() as {discount: number};
+
+        return new TotalCoupon(data.discount)
     }
 
     async getCouponsByYear(year: string): Promise<CouponMonth[]> {
@@ -64,7 +69,7 @@ export class CouponsService {
             .orderBy('month')
             .getRawMany() as {count: string, dicount: string, month: number}[];
 
-        return result.map((data) => 
+        return result.map((data: {count: string, dicount: string, month: number}) => 
             new CouponMonth(data.count, data.dicount, data.month)
         )
 

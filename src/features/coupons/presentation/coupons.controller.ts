@@ -29,12 +29,12 @@ export class CouponsController {
 
     @Get('total')
     getTotal() {
-        return {total: this.getTotalCouponsUseCase.execute()}
+        return this.getTotalCouponsUseCase.execute()
     }
 
     @Get('totalDiscount')
     getTotalDiscount() {
-        return {total: this.getTotalDiscountCouponsUseCase.execute()}
+        return this.getTotalDiscountCouponsUseCase.execute()
     }
 
     @Get('infoByYear')
