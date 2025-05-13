@@ -6,7 +6,7 @@ import { GetClientByEmailUseCase } from '../domain/use-cases/get-client-by-email
 import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('clients')
-@Controller('clients')
+@Controller('clientes')
 export class ClientsController {
   constructor(
     private readonly clientsService: ClientsService,
@@ -14,13 +14,71 @@ export class ClientsController {
     private readonly getClientsPerProductWithDateInfoUseCase: GetClientsPerProductWithDateInfoUseCase,
     private readonly getClientByEmailUseCase: GetClientByEmailUseCase
   ) {}
-
-  @Get('list')
+  
+  // Método auxiliar para formatear fechas
+  private formatDate(date: Date | string | null | undefined): string {
+    if (!date) return '';
+    
+    try {
+      const dateObj = date instanceof Date ? date : new Date(date);
+      if (isNaN(dateObj.getTime())) return '';
+      
+      return dateObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    } catch (e) {
+      return '';
+    }
+  }
+  
+  // Método auxiliar para formatear números a string con 2 decimales
+  private formatNumberToString(value: any): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+    
+    if (typeof value === 'number') {
+      return value.toFixed(2);
+    }
+    
+    // Intentar convertir a número si es una cadena
+    if (typeof value === 'string') {
+      const num = parseFloat(value);
+      if (!isNaN(num)) {
+        return num.toFixed(2);
+      }
+    }
+    
+    return String(value);
+  }
+  @Get()
   @ApiOperation({ summary: 'Get all clients' })
   @ApiResponse({ status: 200, description: 'Return all clients' })
   async getAllClients() {
     try {
-      return await this.getAllClientsUseCase.execute();
+      const clients = await this.getAllClientsUseCase.execute();
+      
+      return clients.map(client => {
+        return {
+          id: client.email || '',
+          email: client.email || '',
+          nombre: client.nombre || '',
+          edad: client.edad ? String(client.edad) : '',
+          sexo: client.sexo || '',
+          cp: client.cp ? String(client.cp) : '',
+          localidad: client.localidad || '',
+          pais: client.pais || '',
+          fecha_lead: this.formatDate(client.fechaLead),
+          fecha_1er_pedido: this.formatDate(client.fechaPrimerPedido),
+          periodo_conversión: client.periodoConversion ? String(client.periodoConversion) : '',
+          fecha_ult_pedido: this.formatDate(client.fechaUltimoPedido),
+          tiempo_ltv: client.tiempoLtv ? String(client.tiempoLtv) : '',
+          entrada_lead: client.entradaLead || '',
+          nº_pedidos: client.numeroPedidos ? String(client.numeroPedidos) : '',
+          ltv: this.formatNumberToString(client.ltv),
+          tm: this.formatNumberToString(client.tm),
+          periodo_medio_compra: client.periodoMedioCompra ? String(client.periodoMedioCompra) : '',
+          periodo_desde_ultimo_pedido: client.periodoDesdeUltimoPedido ? String(client.periodoDesdeUltimoPedido) : ''
+        };
+      });
     } catch (error) {
       throw new HttpException(
         { message: 'Error fetching clients', error: error.message },
@@ -86,7 +144,6 @@ export class ClientsController {
       );
     }
   }
-
   @Get(':id')
   @ApiOperation({ summary: 'Get a client by email' })
   @ApiResponse({ status: 200, description: 'Return a client by email' })
@@ -94,7 +151,29 @@ export class ClientsController {
   @ApiParam({ name: 'id', description: 'Client email' })
   async findOne(@Param('id') id: string) {
     try {
-      return await this.getClientByEmailUseCase.execute(id);
+      const client = await this.getClientByEmailUseCase.execute(id);
+      
+      return {
+        id: client.email || '',
+        email: client.email || '',
+        nombre: client.nombre || '',
+        edad: client.edad ? String(client.edad) : '',
+        sexo: client.sexo || '',
+        cp: client.cp ? String(client.cp) : '',
+        localidad: client.localidad || '',
+        pais: client.pais || '',
+        fecha_lead: this.formatDate(client.fechaLead),
+        fecha_1er_pedido: this.formatDate(client.fechaPrimerPedido),
+        periodo_conversión: client.periodoConversion ? String(client.periodoConversion) : '',
+        fecha_ult_pedido: this.formatDate(client.fechaUltimoPedido),
+        tiempo_ltv: client.tiempoLtv ? String(client.tiempoLtv) : '',
+        entrada_lead: client.entradaLead || '',
+        nº_pedidos: client.numeroPedidos ? String(client.numeroPedidos) : '',
+        ltv: this.formatNumberToString(client.ltv),
+        tm: this.formatNumberToString(client.tm),
+        periodo_medio_compra: client.periodoMedioCompra ? String(client.periodoMedioCompra) : '',
+        periodo_desde_ultimo_pedido: client.periodoDesdeUltimoPedido ? String(client.periodoDesdeUltimoPedido) : ''
+      };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
