@@ -12,6 +12,7 @@ import {OrdersCouponsEntity} from './features/coupons/data/remote/entities/oders
 import {EmptyModule} from './features/empty/empty.module';
 import {Order,Product} from './features/orders-invoices/data/entities/orders-invoices.entity';
 import {OrdersInvoicesModule} from './features/orders-invoices/orders-invoices.module';
+import {ProductsModule} from './features/products/products.module';
 
 
 @Module({
@@ -32,11 +33,11 @@ import {OrdersInvoicesModule} from './features/orders-invoices/orders-invoices.m
         entities: [Order, Product, Client, CartsEntity, OrdersCouponsEntity],
         synchronize: false,
       }),
-    }),    EmptyModule,
-    OrdersInvoicesModule,
+    }),    EmptyModule,    OrdersInvoicesModule,
     CartsModule,
     CouponsModule,
-    ClientsModule
+    ClientsModule,
+    ProductsModule
 
   ],
   controllers: [AppController],
