@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OrdersInvoicesEntity } from '../../../orders-invoices/data/entities/orders-invoices.entity';
+import { Order } from '../../../orders-invoices/data/entities/orders-invoices.entity';
 import { TotalOrders } from '../models/carts-models';
 
 interface QueryResult {
@@ -12,8 +12,8 @@ interface QueryResult {
 @Injectable()
 export class GetTotalOrdersByMonthUseCase {
   constructor(
-    @InjectRepository(OrdersInvoicesEntity)
-    private ordersInvoicesRepository: Repository<OrdersInvoicesEntity>,
+    @InjectRepository(Order)
+    private ordersInvoicesRepository: Repository<Order>,
   ) {}
 
   async execute(): Promise<TotalOrders[]> {
