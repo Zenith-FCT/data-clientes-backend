@@ -9,6 +9,7 @@ import { GetAllClientsUseCase } from './domain/use-cases/get-all-clients.use-cas
 import { GetClientsPerProductWithDateInfoUseCase } from './domain/use-cases/get-clients-per-product-with-date-info.use-case';
 import { GetClientByEmailUseCase } from './domain/use-cases/get-client-by-email.use-case';
 import { CLIENTS_REPOSITORY } from './domain/interfaces/iclients.repository';
+import { ClientResponseMapper } from './presentation/mappers/client-response.mapper';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { CLIENTS_REPOSITORY } from './domain/interfaces/iclients.repository';
     },
     GetAllClientsUseCase,
     GetClientsPerProductWithDateInfoUseCase,
-    GetClientByEmailUseCase
+    GetClientByEmailUseCase,
+    ClientResponseMapper
   ],
   exports: [ClientsService]
 })
