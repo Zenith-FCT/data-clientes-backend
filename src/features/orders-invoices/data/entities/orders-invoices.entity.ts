@@ -1,16 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
-
-@Entity('pedidos')
-export class OrdersInvoicesEntity {
-    @PrimaryGeneratedColumn()
-    id: string;
-    
-    @Column({ name: 'Fecha_Pedido', type: 'date' })
-    fechaPedido: Date;
-    
-    @Column({ name: 'Total_Pedido', type: 'decimal', precision: 10, scale: 2 })
-    totalPedido: number;
-}
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity('pedidos')
 export class Order {
@@ -103,5 +91,4 @@ export class Client {
 
   @Column({ type: 'int', nullable: true, name: 'Periodo_desde_ultimo_pedido' })
   periodoDesdeUltimoPedido: number;
-
 }

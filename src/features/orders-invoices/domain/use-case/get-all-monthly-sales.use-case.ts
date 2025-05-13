@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OrdersInvoicesEntity } from '../../data/entities/orders-invoices.entity';
+import { Order } from '../../data/entities/orders-invoices.entity';
 import { MonthlySalesModel } from '../models/monthly-sales-model';
 
 interface MonthlySalesRawData {
@@ -13,8 +13,8 @@ interface MonthlySalesRawData {
 @Injectable()
 export class GetAllMonthlySalesUseCase {
     constructor(
-        @InjectRepository(OrdersInvoicesEntity)
-        private ordersRepository: Repository<OrdersInvoicesEntity>
+        @InjectRepository(Order)
+        private ordersRepository: Repository<Order>
     ) {}      
     
     async execute(): Promise<MonthlySalesModel[]> {

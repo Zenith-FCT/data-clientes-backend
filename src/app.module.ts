@@ -8,7 +8,7 @@ import {CartsEntity} from './features/carts/data/entities/carts.entity';
 import {CouponsModule} from './features/coupons/coupons.module';
 import {OrdersCouponsEntity} from './features/coupons/data/remote/entities/oders-coupons-invoices.entity';
 import {EmptyModule} from './features/empty/empty.module';
-import {Client,Order,OrdersInvoicesEntity,Product} from './features/orders-invoices/data/entities/orders-invoices.entity';
+import {Client,Order,Product} from './features/orders-invoices/data/entities/orders-invoices.entity';
 import {OrdersInvoicesModule} from './features/orders-invoices/orders-invoices.module';
 
 
@@ -27,7 +27,7 @@ import {OrdersInvoicesModule} from './features/orders-invoices/orders-invoices.m
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [OrdersInvoicesEntity, Order, Product, Client, CartsEntity, OrdersCouponsEntity],
+        entities: [Order, Product, Client, CartsEntity, OrdersCouponsEntity],
         synchronize: false,
       }),
     }),
