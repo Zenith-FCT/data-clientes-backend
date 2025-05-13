@@ -1,17 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ClientsService } from './database/clients.service';
+import { ClientsService, ClientProductDateQueryResult } from './database/clients.service';
 import { IClientsRepository } from '../domain/interfaces/iclients.repository';
 import { ClientModel } from '../domain/models/client.model';
 import { ProductClientDistributionWithDateModel } from '../domain/models/product-client-distribution-with-date.model';
-
-// Importamos la interfaz del servicio para un tipado seguro
-interface ClientProductDateQueryResult {
-  name: string;
-  value: string | number;
-  yearMonth: string;
-  year: string | number;
-  month: string | number;
-}
 
 @Injectable()
 export class ClientsDataRepository implements IClientsRepository {
@@ -55,22 +46,14 @@ export class ClientsDataRepository implements IClientsRepository {
       // Agrupar por año-mes para calcular porcentajes dentro de cada período
       const groupedByYearMonth: Record<string, ProductClientDistributionWithDateModel[]> = {};
       
-      // Primero convertimos los datos al modelo correcto con conversión de tipos adecuada
-      const typedData: ProductClientDistributionWithDateModel[] = data.map(item => {
-        const name = String(item.name || '');
-        const value = typeof item.value === 'string' ? parseInt(item.value, 10) : (item.value || 0);
-        const yearMonth = String(item.yearMonth || '');
-        const year = typeof item.year === 'string' ? parseInt(item.year, 10) : (item.year || 0);
-        const month = typeof item.month === 'string' ? parseInt(item.month, 10) : (item.month || 0);
-        
-        return {
-          name,
-          value,
-          yearMonth,
-          year,
-          month
-        };
-      });
+      // Los datos ya vienen con el tipado correcto desde el servicio, solo convertimos al modelo del dominio
+      const typedData: ProductClientDistributionWithDateModel[] = data.map(item => ({
+        name: item.name,
+        value: item.value,
+        yearMonth: item.yearMonth,
+        year: item.year,
+        month: item.month
+      }));
       
       // Agrupamos por año-mes
       for (const item of typedData) {
