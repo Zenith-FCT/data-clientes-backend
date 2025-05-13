@@ -5,10 +5,12 @@ import {AppController} from './app.controller';
 import {AppService} from './app.service';
 import {CartsModule} from './features/carts/carts.module';
 import {CartsEntity} from './features/carts/data/entities/carts.entity';
+import {ClientsModule} from './features/clients/clients.module';
+import {Client} from './features/clients/data/entities/client.entity';
 import {CouponsModule} from './features/coupons/coupons.module';
 import {OrdersCouponsEntity} from './features/coupons/data/remote/entities/oders-coupons-invoices.entity';
 import {EmptyModule} from './features/empty/empty.module';
-import {Client,Order,Product} from './features/orders-invoices/data/entities/orders-invoices.entity';
+import {Order,Product} from './features/orders-invoices/data/entities/orders-invoices.entity';
 import {OrdersInvoicesModule} from './features/orders-invoices/orders-invoices.module';
 
 
@@ -30,11 +32,11 @@ import {OrdersInvoicesModule} from './features/orders-invoices/orders-invoices.m
         entities: [Order, Product, Client, CartsEntity, OrdersCouponsEntity],
         synchronize: false,
       }),
-    }),
-    EmptyModule,
+    }),    EmptyModule,
     OrdersInvoicesModule,
     CartsModule,
-    CouponsModule
+    CouponsModule,
+    ClientsModule
 
   ],
   controllers: [AppController],
