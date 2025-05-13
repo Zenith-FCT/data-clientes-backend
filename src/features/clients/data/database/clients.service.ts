@@ -82,7 +82,8 @@ export class ClientsService {
         ORDER BY yearMonth DESC, value DESC
       `;
       
-      const results: RawClientProductDateQueryResult[] = await this.orderRepository.query(query);
+      // Usamos aserción de tipo para asegurar que el resultado de la consulta es del tipo esperado
+      const results = await this.orderRepository.query(query) as RawClientProductDateQueryResult[];
       
       if (!results || results.length === 0) {
         // Datos de muestra si no hay resultados

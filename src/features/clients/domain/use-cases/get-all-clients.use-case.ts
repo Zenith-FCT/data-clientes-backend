@@ -13,9 +13,10 @@ export class GetAllClientsUseCase {
 
   async execute(): Promise<ClientModel[]> {
     try {
-      return await this.clientsRepository.getAllClients();
-    } catch (error) {
-      this.logger.error(`Error executing GetAllClientsUseCase: ${error.message}`, error.stack);
+      return await this.clientsRepository.getAllClients();    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
+      this.logger.error(`Error executing GetAllClientsUseCase: ${errorMessage}`, errorStack);
       throw error;
     }
   }

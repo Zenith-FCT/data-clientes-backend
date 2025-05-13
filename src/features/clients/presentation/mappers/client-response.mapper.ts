@@ -10,13 +10,13 @@ export class ClientResponseMapper {
   // Método auxiliar para formatear fechas
   private formatDate(date: Date | string | null | undefined): string {
     if (!date) return '';
-    
-    try {
+      try {
       const dateObj = date instanceof Date ? date : new Date(date);
       if (isNaN(dateObj.getTime())) return '';
       
       return dateObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-    } catch (e) {
+    } catch (_) {
+      // Si hay un error en la conversión de fecha, retornamos una cadena vacía
       return '';
     }
   }

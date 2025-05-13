@@ -19,9 +19,10 @@ export class GetClientByEmailUseCase {
         throw new NotFoundException(`Client with email ${email} not found`);
       }
       
-      return client;
-    } catch (error) {
-      this.logger.error(`Error executing GetClientByEmailUseCase: ${error.message}`, error.stack);
+      return client;    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
+      this.logger.error(`Error executing GetClientByEmailUseCase: ${errorMessage}`, errorStack);
       throw error;
     }
   }

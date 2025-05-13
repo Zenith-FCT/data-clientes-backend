@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ClientsService, ClientProductDateQueryResult } from './database/clients.service';
+import { ClientsService } from './database/clients.service';
 import { IClientsRepository } from '../domain/interfaces/iclients.repository';
 import { ClientModel } from '../domain/models/client.model';
 import { ProductClientDistributionWithDateModel } from '../domain/models/product-client-distribution-with-date.model';

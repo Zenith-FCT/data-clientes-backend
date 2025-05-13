@@ -13,9 +13,10 @@ export class GetClientsPerProductWithDateInfoUseCase {
 
   async execute(): Promise<ProductClientDistributionWithDateModel[]> {
     try {
-      return await this.clientsRepository.getClientsPerProductWithDateInfo();
-    } catch (error) {
-      this.logger.error(`Error executing GetClientsPerProductWithDateInfoUseCase: ${error.message}`, error.stack);
+      return await this.clientsRepository.getClientsPerProductWithDateInfo();    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
+      this.logger.error(`Error executing GetClientsPerProductWithDateInfoUseCase: ${errorMessage}`, errorStack);
       throw error;
     }
   }

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Delete, HttpException, HttpStatus, NotFoundException, Query } from '@nestjs/common';
+import { Controller, Get, Param, HttpException, HttpStatus, NotFoundException, Query } from '@nestjs/common';
 import { ClientsService } from '../data/database/clients.service';
 import { GetAllClientsUseCase } from '../domain/use-cases/get-all-clients.use-case';
 import { GetClientsPerProductWithDateInfoUseCase } from '../domain/use-cases/get-clients-per-product-with-date-info.use-case';
@@ -21,10 +21,10 @@ export class ClientsController {
   async getAllClients() {
     try {
       const clients = await this.getAllClientsUseCase.execute();
-      return this.clientResponseMapper.toResponseList(clients);
-    } catch (error) {
+      return this.clientResponseMapper.toResponseList(clients);    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new HttpException(
-        { message: 'Error fetching clients', error: error.message },
+        { message: 'Error fetching clients', error: errorMessage },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -76,13 +76,13 @@ export class ClientsController {
         const yearMatch = !yearParam || item.year === yearParam;
         const monthMatch = !monthParam || item.month === monthParam;
         return yearMatch && monthMatch;
-      });
-    } catch (error) {
+      });    } catch (error: unknown) {
       if (error instanceof HttpException) {
         throw error;
       }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new HttpException(
-        { message: 'Error fetching clients per product distribution', error: error.message },
+        { message: 'Error fetching clients per product distribution', error: errorMessage },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -94,13 +94,13 @@ export class ClientsController {
   async findOne(@Param('id') id: string) {
     try {
       const client = await this.getClientByEmailUseCase.execute(id);
-      return this.clientResponseMapper.toResponse(client);
-    } catch (error) {
+      return this.clientResponseMapper.toResponse(client);    } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
       }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new HttpException(
-        { message: `Error fetching client with email ${id}`, error: error.message },
+        { message: `Error fetching client with email ${id}`, error: errorMessage },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
