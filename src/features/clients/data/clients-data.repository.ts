@@ -4,6 +4,15 @@ import { IClientsRepository } from '../domain/interfaces/iclients.repository';
 import { ClientModel } from '../domain/models/client.model';
 import { ProductClientDistributionWithDateModel } from '../domain/models/product-client-distribution-with-date.model';
 
+// Importamos la interfaz del servicio para un tipado seguro
+interface ClientProductDateQueryResult {
+  name: string;
+  value: string | number;
+  yearMonth: string;
+  year: string | number;
+  month: string | number;
+}
+
 @Injectable()
 export class ClientsDataRepository implements IClientsRepository {
   private readonly logger = new Logger(ClientsDataRepository.name);
@@ -33,27 +42,35 @@ export class ClientsDataRepository implements IClientsRepository {
         tm: client.tm,
         periodoMedioCompra: client.periodoMedioCompra,
         periodoDesdeUltimoPedido: client.periodoDesdeUltimoPedido
-      }));
-    } catch (error) {
-      this.logger.error(`Error in data repository getAllClients: ${error.message}`, error.stack);
+      }));    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
+      this.logger.error(`Error in data repository getAllClients: ${errorMessage}`, errorStack);
       throw error;
     }
-  }
-  async getClientsPerProductWithDateInfo(): Promise<ProductClientDistributionWithDateModel[]> {
+  }  async getClientsPerProductWithDateInfo(): Promise<ProductClientDistributionWithDateModel[]> {
     try {
       const data = await this.clientsService.getClientsPerProductWithDateInfo();
       
       // Agrupar por año-mes para calcular porcentajes dentro de cada período
       const groupedByYearMonth: Record<string, ProductClientDistributionWithDateModel[]> = {};
       
-      // Primero convertimos los datos al modelo correcto
-      const typedData: ProductClientDistributionWithDateModel[] = data.map(item => ({
-        name: item.name,
-        value: item.value,
-        yearMonth: item.yearMonth,
-        year: item.year,
-        month: item.month
-      }));
+      // Primero convertimos los datos al modelo correcto con conversión de tipos adecuada
+      const typedData: ProductClientDistributionWithDateModel[] = data.map(item => {
+        const name = String(item.name || '');
+        const value = typeof item.value === 'string' ? parseInt(item.value, 10) : (item.value || 0);
+        const yearMonth = String(item.yearMonth || '');
+        const year = typeof item.year === 'string' ? parseInt(item.year, 10) : (item.year || 0);
+        const month = typeof item.month === 'string' ? parseInt(item.month, 10) : (item.month || 0);
+        
+        return {
+          name,
+          value,
+          yearMonth,
+          year,
+          month
+        };
+      });
       
       // Agrupamos por año-mes
       for (const item of typedData) {
@@ -78,9 +95,10 @@ export class ClientsDataRepository implements IClientsRepository {
         }
       }
       
-      return result;
-    } catch (error) {
-      this.logger.error(`Error in data repository getClientsPerProductWithDateInfo: ${error.message}`, error.stack);
+      return result;    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
+      this.logger.error(`Error in data repository getClientsPerProductWithDateInfo: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -113,9 +131,10 @@ export class ClientsDataRepository implements IClientsRepository {
         tm: client.tm,
         periodoMedioCompra: client.periodoMedioCompra,
         periodoDesdeUltimoPedido: client.periodoDesdeUltimoPedido
-      };
-    } catch (error) {
-      this.logger.error(`Error in data repository getClientByEmail: ${error.message}`, error.stack);
+      };    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
+      this.logger.error(`Error in data repository getClientByEmail: ${errorMessage}`, errorStack);
       throw error;
     }
   }

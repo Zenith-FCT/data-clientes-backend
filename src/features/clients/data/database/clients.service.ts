@@ -4,6 +4,15 @@ import { Repository } from 'typeorm';
 import { Client } from '../entities/client.entity';
 import { Product, Order } from '../../../orders-invoices/data/entities/orders-invoices.entity';
 
+// Interfaz para tipar los resultados de la consulta
+interface ClientProductDateQueryResult {
+  name: string;
+  value: string | number;
+  yearMonth: string;
+  year: string | number;
+  month: string | number;
+}
+
 @Injectable()
 export class ClientsService {
   private readonly logger = new Logger(ClientsService.name);
@@ -21,9 +30,10 @@ export class ClientsService {
   
   async getAllClients(): Promise<Client[]> {
     try {
-      return await this.clientRepository.find();
-    } catch (error) {
-      this.logger.error(`Error fetching all clients: ${error.message}`, error.stack);
+      return await this.clientRepository.find();    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
+      this.logger.error(`Error fetching all clients: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -37,9 +47,10 @@ export class ClientsService {
 
   async getClientByEmail(email: string): Promise<Client | null> {
     try {
-      return await this.clientRepository.findOne({ where: { email } });
-    } catch (error) {
-      this.logger.error(`Error fetching client by email: ${error.message}`, error.stack);
+      return await this.clientRepository.findOne({ where: { email } });    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
+      this.logger.error(`Error fetching client by email: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -47,7 +58,7 @@ export class ClientsService {
     return `This action removes a #${id} client`;
   }
 
-  async getClientsPerProductWithDateInfo(): Promise<any[]> {
+  async getClientsPerProductWithDateInfo(): Promise<ClientProductDateQueryResult[]> {
     try {
       // Esta consulta obtiene todos los pedidos con información de categoría y fecha
       const query = `
@@ -83,17 +94,17 @@ export class ClientsService {
           { name: 'Hogar', value: 25, yearMonth: `${currentYear}-${currentMonth-2}`, year: currentYear, month: currentMonth-2 }
         ];
       }
-      
-      // Transforma los resultados para que sean más fáciles de usar en el frontend
+        // Transforma los resultados para que sean más fáciles de usar en el frontend
       return results.map(item => ({
-        name: item.name,
-        value: parseInt(item.value) || 0,
-        yearMonth: item.yearMonth,
-        year: parseInt(item.year),
-        month: parseInt(item.month)
-      }));
-    } catch (error) {
-      this.logger.error(`Error getting clients per product with date info: ${error.message}`, error.stack);
+        name: String(item.name || ''),
+        value: typeof item.value === 'string' ? parseInt(item.value, 10) || 0 : Number(item.value) || 0,
+        yearMonth: String(item.yearMonth || ''),
+        year: typeof item.year === 'string' ? parseInt(item.year, 10) || 0 : Number(item.year) || 0,
+        month: typeof item.month === 'string' ? parseInt(item.month, 10) || 0 : Number(item.month) || 0
+      }));    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace';
+      this.logger.error(`Error getting clients per product with date info: ${errorMessage}`, errorStack);
       throw error;
     }
   }
