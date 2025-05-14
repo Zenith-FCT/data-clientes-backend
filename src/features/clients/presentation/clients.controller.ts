@@ -21,7 +21,9 @@ export class ClientsController {
   async getAllClients() {
     try {
       const clients = await this.getAllClientsUseCase.execute();
-      return this.clientResponseMapper.toResponseList(clients);    } catch (error: unknown) {
+      // Return directly as array for json-server compatibility
+      return this.clientResponseMapper.toResponseList(clients);
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new HttpException(
         { message: 'Error fetching clients', error: errorMessage },
@@ -94,7 +96,9 @@ export class ClientsController {
   async findOne(@Param('id') id: string) {
     try {
       const client = await this.getClientByEmailUseCase.execute(id);
-      return this.clientResponseMapper.toResponse(client);    } catch (error: unknown) {
+      // Devolvemos el cliente directamente sin envolverlo en un objeto adicional
+      return this.clientResponseMapper.toResponse(client);
+    } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
       }

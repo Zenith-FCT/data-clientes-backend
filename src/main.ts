@@ -1,13 +1,22 @@
 ﻿import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ResponseFormatInterceptor } from './common/interceptors/response-format.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  
-  // Enable CORS
-  app.enableCors();
+  // Enable more verbose logging to help troubleshoot the API integration
+  const logger = new Logger('Bootstrap');
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+  });  // Enable CORS with specific configuration
+  app.enableCors({
+    origin: true, // Permite cualquier origen (en producción, especificar dominio)
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+    exposedHeaders: 'Authorization',
+  });
   
   // Apply global pipes
   app.useGlobalPipes(
@@ -17,6 +26,9 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  
+  // Apply the global interceptor to format all responses
+  app.useGlobalInterceptors(new ResponseFormatInterceptor());
   
   // Configure Swagger
   const config = new DocumentBuilder()
