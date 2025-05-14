@@ -28,11 +28,10 @@ export class ProductsController {
         }
       }
     }
-  })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
-  async getAllProducts() {
+  })  @ApiResponse({ status: 500, description: 'Internal server error' })  async getAllProducts() {
     try {
       const products = await this.getAllProductsUseCase.execute();
+      // Return as direct array for json-server compatibility
       return this.productResponseMapper.toResponseList(products);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';

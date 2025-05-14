@@ -1,4 +1,4 @@
-import {Module} from '@nestjs/common';
+import {Module, MiddlewareConsumer, RequestMethod} from '@nestjs/common';
 import {ConfigModule,ConfigService} from '@nestjs/config';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {AppController} from './app.controller';
@@ -10,13 +10,15 @@ import {Client} from './features/clients/data/entities/client.entity';
 import {CouponsModule} from './features/coupons/coupons.module';
 import {OrdersCouponsEntity} from './features/coupons/data/remote/entities/oders-coupons-invoices.entity';
 import {EmptyModule} from './features/empty/empty.module';
-import {Order,Product} from './features/orders-invoices/data/entities/orders-invoices.entity';
+import {Order as OrderInvoice, Product} from './features/orders-invoices/data/entities/orders-invoices.entity';
 import {OrdersInvoicesModule} from './features/orders-invoices/orders-invoices.module';
 import {ProductsModule} from './features/products/products.module';
+import {OrdersModule} from './features/orders/orders.module';
+import {Order} from './features/orders/data/entities/order.entity';
+import {LoggingMiddleware} from './common/middleware/logging.middleware';
 
 
-@Module({
-  imports: [
+@Module({  imports: [
     ConfigModule.forRoot({
       isGlobal: true,    
     }),    
@@ -30,17 +32,26 @@ import {ProductsModule} from './features/products/products.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [Order, Product, Client, CartsEntity, OrdersCouponsEntity],
+        entities: [OrderInvoice, Product, Client, CartsEntity, OrdersCouponsEntity, Order],
         synchronize: false,
       }),
-    }),    EmptyModule,    OrdersInvoicesModule,
+    }),    
+    EmptyModule,    
+    OrdersInvoicesModule,
     CartsModule,
     CouponsModule,
     ClientsModule,
-    ProductsModule
+    ProductsModule,
+    OrdersModule
 
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggingMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
